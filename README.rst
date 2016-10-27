@@ -71,3 +71,26 @@ and leave the 'Translation of ...' field blank.
 Create another new ``ContentPage`` for French.
 On the 'Translations' tab, select French for the language,
 and select the English page you just created in the 'Translation of ...' field.
+
+Testing
+=======
+
+To start a test server, run:
+
+.. code-block:: sh
+
+    $ python3 -m venv venv
+    $ source venv/bin/activate
+    $ pip install -e .
+    $ export DJANGO_SETTINGS_MODULE=tests.settings
+    $ django-admin migrate
+    $ django-admin createsuperuser
+    $ django-admin runserver
+
+To run the automated test suite:
+
+.. code-block:: sh
+
+    # Do not run this from within a virtual environment
+    $ pip install --user --upgrade tox pip setuptools
+    $ tox
