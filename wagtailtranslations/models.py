@@ -76,12 +76,12 @@ class TranslatedPage(Page):
     # Users can change this through the admin UI, although the raw UUID
     # value should never be shown.
     translation_key = models.UUIDField(
-        db_index=True, default=uuid.uuid4, verbose_name=_("Translation group"))
+        db_index=True, default=uuid.uuid4, verbose_name=_("translation group"))
 
     # Deleting a language that still has pages is not allowed, as it would
     # either lead to tree corruption, or to pages with a null language.
     language = models.ForeignKey(
-        Language, on_delete=models.PROTECT, verbose_name=_("Language"))
+        Language, on_delete=models.PROTECT, verbose_name=_("language"))
 
     translation_panel = MultiFieldPanel([
         FieldPanel('language'),
