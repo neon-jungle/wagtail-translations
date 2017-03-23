@@ -1,0 +1,25 @@
+<div class="c-dropdown u-para t-default" data-dropdown="">
+    <a class="c-dropdown__button  u-btn-current">
+        {{ label }}
+        <div data-dropdown-toggle="" class="o-icon  c-dropdown__toggle  [ icon icon-arrow-down ]"></div>
+    </a>
+    <div class="t-dark">
+        <ul role="menu" class="c-dropdown__menu  u-toggle  u-arrow u-arrow--tl u-background">
+
+            {% for translation in page.get_translations %}
+                {% if translation != page %}
+                    <li class="c-dropdown__item">
+                    <a href="{% url "wagtailadmin_pages:edit" translation.pk %}" class="u-link {% if translation.live %}is-live{% else %}is-draft{% endif %}">
+                             {% if translation.live %}   
+                                <span title="Live" class="c-indicator c-dropdown__indicator"></span>
+                            {% else %}
+                                <span title="Draft" class="c-indicator c-dropdown__indicator"></span>
+                            {% endif %}
+                            {{ translation.language }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
