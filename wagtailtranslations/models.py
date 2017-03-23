@@ -1,8 +1,10 @@
-import uuid
+from decimal import Decimal
+from operator import itemgetter
 
 from django import forms
 from django.conf import settings
 from django.db import models
+from django.db.models import Case, Value, When
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
@@ -10,6 +12,67 @@ from django.utils.translation import activate
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel
 from wagtail.wagtailadmin.forms import WagtailAdminModelForm
 from wagtail.wagtailcore.models import Page
+
+from .fields import TranslationKeyField
+
+
+def split_accept_header(header):
+    """
+    Take an Accept header and yield `(accept_type, options)` tuples. For
+    example:
+
+    .. code-block:: python
+
+        >>> list(split_accept_header('foo, bar;q=0.8, baz;q=0.4;quux=zuul'))
+        [('foo', {}), ('bar', {'q': '0.8'}), ('baz', {'q': '0.4', 'quux': 'zuul'})]
+    """
+    if not header:
+        return  # Bail early on an empty string
+
+    for chunk in header.split(','):
+        bits = chunk.split(';')
+        accept_type = bits[0].strip()
+        args = dict(arg.strip().split('=', 2) for arg in bits[1:] if '=' in arg)
+        yield accept_type, args
+
+
+def parse_accept_header(header):
+    """
+    Return an iterable of accept types from an accept header, in order from
+    most acceptable to least.
+    """
+    options = []
+    for accept_type, args in split_accept_header(header):
+        try:
+            quality = Decimal(args['q'])
+        except KeyError:
+            quality = 1
+        except ValueError:
+            continue
+        options.append((accept_type, quality))
+    return [i[0] for i in sorted(options, key=itemgetter(1), reverse=True)]
+
+
+def get_request_language_preference(request):
+    """
+    Collect language preferences from request.LANGUAGE_CODE, the HTTP
+    Accept-Language header, and settings.LANGUAGE_CODE, and return a list of
+    languages in preference order.
+    """
+    all_langs = []
+    if hasattr(request, 'LANGUAGE_CODE'):
+        all_langs.append(request.LANGUAGE_CODE)
+    all_langs.extend(parse_accept_header(request.META.get('HTTP_ACCEPT_LANGUAGE', '')))
+    all_langs.append(settings.LANGUAGE_CODE)
+
+    # Remove duplicates while preserving order. The list of languages should be
+    # quite short, so the inefficiency of this method should not matter.
+    # Famous last words.
+    langs = []
+    for lang in all_langs:
+        if lang not in langs:
+            langs.append(lang)
+    return langs
 
 
 def get_default_language():
@@ -20,14 +83,31 @@ def get_default_language():
 
 
 class LanguageQuerySet(models.QuerySet):
-    def get_user_languages(self, request):
+    def get_user_languages(self, language_preferences):
         """
-        Get the best matching Languages for a request, in order from best to
-        worst.  The default language (if there is one) will always appear in
-        this list.
+        Get the best matching Languages for a list of preferences, in order
+        from best to worst. All languages will appear in the queryset.
         """
-        # Implementation left as an exercise to the reader
-        return self.all()
+        # Scores: Matched languages will get a score depending upon their
+        # preference - better languages will get a higher score, down to 0 for
+        # the 'worst' preferenced language. The default language will get a
+        # score or -1 unless it matched as a preference, and all other
+        # languages will get a score of -2
+
+        # `When` clauses for all the preferred languages
+        clauses = [
+            When(code__iexact=language, then=Value(i))
+            for i, language in enumerate(reversed(language_preferences))]
+
+        # The default language gets a score of -1
+        clauses.append(When(is_default=True, then=Value(-1)))
+
+        return self.annotate(
+            score=Case(
+                *clauses,
+                default=Value(-2),  # Everything else gets -2
+                output_field=models.IntegerField(null=True))
+        ).order_by('-score', 'order')
 
     def live_q(self):
         return models.Q(live=True)
@@ -133,23 +213,27 @@ class TranslatedPage(Page):
 class AbstractTranslationIndexPage(Page):
 
     def serve(self, request):
-        languages = Language.objects.get_user_languages(request)
+        language_preferences = get_request_language_preference(request)
+        languages = Language.objects.get_user_languages(language_preferences)
 
         candidate_pages = TranslatedPage.objects\
             .live().specific()\
-            .child_of(self)
+            .child_of(self)\
+            .filter(language__in=languages)\
+            .annotate(language_score=Case(
+                *[When(language=language, then=Value(i))
+                  for i, language in enumerate(languages)],
+                default=Value(None),
+                output_field=models.IntegerField(null=True)))\
+            .order_by('language_score')
 
-        for language in languages:
-            try:
-                # Try and get a translation in the users language
-                translation = candidate_pages.filter(language=language).get()
-                # Redirect them to that page instead
-                return redirect(translation.url)
-            except TranslatedPage.DoesNotExist:
-                continue
-
-        # No translation was found, not even in the default language! Oh dear.
-        raise Http404
+        translation = candidate_pages.first()
+        if translation:
+            # Redirect to the best translation
+            return redirect(translation.url)
+        else:
+            # No translation was found, not even in the default language! Oh dear.
+            raise Http404
 
     class Meta:
         abstract = True
