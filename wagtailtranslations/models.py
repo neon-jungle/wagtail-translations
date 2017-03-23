@@ -12,6 +12,13 @@ from wagtail.wagtailadmin.forms import WagtailAdminModelForm
 from wagtail.wagtailcore.models import Page
 
 
+def get_default_language():
+    """
+    Used as the default argument for Page to Language foreign keys
+    """
+    return Language.objects.default_language().pk
+
+
 class LanguageQuerySet(models.QuerySet):
     def get_user_languages(self, request):
         """
@@ -27,6 +34,9 @@ class LanguageQuerySet(models.QuerySet):
 
     def live(self):
         return self.filter(self.live_q())
+
+    def default_language(self):
+        return self.filter(is_default=True).first()
 
 
 class LanguageAdminForm(WagtailAdminModelForm):
@@ -73,15 +83,19 @@ class TranslatedPage(Page):
         Page, parent_link=True, related_name='+', on_delete=models.CASCADE)
 
     # Pages with identical translation_keys are translations of each other
-    # Users can change this through the admin UI, although the raw UUID
-    # value should never be shown.
-    translation_key = models.UUIDField(
-        db_index=True, default=uuid.uuid4, verbose_name=_("translation group"))
+    # Users can change this through the admin UI by picking an existing page
+    # this page is a translation of.
+    translation_key = TranslationKeyField(
+        verbose_name=_("translation group"),
+        help_text=_(
+            "Select another page this is page is a translation of. "
+            "Leave this blank if this page has no other version in another language"))
 
     # Deleting a language that still has pages is not allowed, as it would
     # either lead to tree corruption, or to pages with a null language.
     language = models.ForeignKey(
-        Language, on_delete=models.PROTECT, verbose_name=_("language"))
+        Language, on_delete=models.PROTECT, verbose_name=_("language"),
+        default=get_default_language)
 
     translation_panel = MultiFieldPanel([
         FieldPanel('language'),
