@@ -10,7 +10,8 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import activate
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel
-from wagtail.wagtailadmin.forms import WagtailAdminModelForm
+from wagtail.wagtailadmin.forms import (
+    WagtailAdminModelForm, WagtailAdminPageForm)
 from wagtail.wagtailcore.models import Page
 
 from .fields import TranslationKeyField
@@ -157,6 +158,13 @@ class Language(models.Model):
         return lang_dict.get(self.code, self.code)
 
 
+class TranslatedPageAdminForm(WagtailAdminPageForm):
+    def __init__(self, *args, **kwargs):
+        super(TranslatedPageAdminForm, self).__init__(*args, **kwargs)
+        if self.parent_page and any(field.name == 'language' for field in self.parent_page.specific._meta.fields):
+            self.initial['language'] = self.parent_page.specific.language
+
+
 class TranslatedPage(Page):
     # Explicitly defined with a unique name so that clashes are unlikely
     translated_page_ptr = models.OneToOneField(
@@ -183,6 +191,8 @@ class TranslatedPage(Page):
     ], heading='Translation')
 
     settings_panels = Page.settings_panels + [translation_panel]
+
+    base_form_class = TranslatedPageAdminForm
 
     is_creatable = False
 
