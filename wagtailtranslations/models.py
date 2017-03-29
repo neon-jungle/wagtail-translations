@@ -209,7 +209,8 @@ class TranslatedPage(Page):
 
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
-        return super().serve(request, *args, **kwargs)
+        request.LANGUAGE_CODE = self.language.code
+        return super(TranslatedPage, self).serve(request, *args, **kwargs)
 
     def get_translations(self):
         return TranslatedPage.objects\
