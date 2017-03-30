@@ -2,8 +2,6 @@
 """
 Install wagtailtranslations using setuptools
 """
-import sys
-
 from setuptools import find_packages, setup
 
 with open('wagtailtranslations/version.py', 'r') as f:
@@ -22,7 +20,10 @@ setup(
     author_email='tim@takeflight.com.au',
     url='https://github.com/takeflight/wagtailtranslations/',
 
-    install_requires=['wagtail>=1.7'],
+    install_requires=[
+        'wagtail>=1.7',
+        'wagtailfontawesome~=1.0.6',
+    ],
     zip_safe=False,
     license='BSD License',
 
