@@ -4,7 +4,7 @@ from django import forms
 from wagtail.wagtailadmin.widgets import AdminPageChooser
 
 
-class TranslationKeyField(forms.ModelChoiceField):
+class BaseTranslationKeyChoiceField(forms.ModelChoiceField):
     """
     A form field that gets the translation key of a translatable model.
     Set the queryset to determine which model is being translated.
@@ -14,11 +14,11 @@ class TranslationKeyField(forms.ModelChoiceField):
     def __init__(self, translation_key_field=None, **kwargs):
         if translation_key_field is not None:
             self.translation_key_field = translation_key_field
-        super(TranslationKeyField, self).__init__(**kwargs)
+        super(BaseTranslationKeyChoiceField, self).__init__(**kwargs)
 
     def to_python(self, value):
         # Converts a model to its translation key
-        value = super(TranslationKeyField, self).to_python(value)
+        value = super(BaseTranslationKeyChoiceField, self).to_python(value)
         if value is None:
             return self.initial()
         return getattr(value, self.translation_key_field)
@@ -26,10 +26,10 @@ class TranslationKeyField(forms.ModelChoiceField):
     def prepare_value(self, value):
         if isinstance(value, uuid.UUID):
             value = self.queryset.filter(**{self.translation_key_field: value}).first()
-        return super(TranslationKeyField, self).prepare_value(value)
+        return super(BaseTranslationKeyChoiceField, self).prepare_value(value)
 
 
-class TranslatedPageChoiceField(TranslationKeyField):
+class TranslatedPageChoiceField(BaseTranslationKeyChoiceField):
     """
     A form field that selects a TranslatedPage, and gets its translation_key.
     """

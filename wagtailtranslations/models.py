@@ -14,7 +14,7 @@ from wagtail.wagtailadmin.forms import (
     WagtailAdminModelForm, WagtailAdminPageForm)
 from wagtail.wagtailcore.models import Page
 
-from .fields import TranslationKeyField
+from .fields import PageTranslationKeyField
 
 
 def split_accept_header(header):
@@ -173,7 +173,7 @@ class TranslatedPage(Page):
     # Pages with identical translation_keys are translations of each other
     # Users can change this through the admin UI by picking an existing page
     # this page is a translation of.
-    translation_key = TranslationKeyField(
+    translation_key = PageTranslationKeyField(
         verbose_name=_("translation group"),
         help_text=_(
             "Select another page this is page is a translation of. "
