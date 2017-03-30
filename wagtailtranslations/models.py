@@ -153,9 +153,13 @@ class Language(models.Model):
     class Meta:
         ordering = ['order']
 
-    def __str__(self):
+    @property
+    def name(self):
         lang_dict = dict(settings.LANGUAGES)
         return lang_dict.get(self.code, self.code)
+
+    def __str__(self):
+        return self.name
 
 
 class TranslatedPageAdminForm(WagtailAdminPageForm):
