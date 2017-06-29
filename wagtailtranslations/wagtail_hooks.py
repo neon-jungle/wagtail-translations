@@ -7,11 +7,13 @@ from wagtail.wagtailcore import hooks
 from .models import Language, TranslatedPage
 
 
-@modeladmin_register
 class LanguageModelAdmin(ModelAdmin):
     model = Language
     menu_icon = 'fa-language'
     add_to_settings_menu = True
+
+
+modeladmin_register(LanguageModelAdmin)
 
 
 class TranslationListingButton(Button):
