@@ -11,6 +11,7 @@ class BaseTranslationKeyField(models.UUIDField):
     A model field that groups instances that are the same item in different
     languages together with a common key.
     """
+
     def __init__(self, default=uuid.uuid4,
                  db_index=True, **kwargs):
         super(BaseTranslationKeyField, self).__init__(
