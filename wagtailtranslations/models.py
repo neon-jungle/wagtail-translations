@@ -7,11 +7,10 @@ from django.db import models
 from django.db.models import Case, Value, When
 from django.http import Http404
 from django.shortcuts import redirect
-from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import activate
+from django.utils.translation import ugettext_lazy as _
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
-from wagtail.admin.forms import (
-    WagtailAdminModelForm, WagtailAdminPageForm)
+from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 from wagtail.core.models import Page
 
 from .fields import PageTranslationKeyField

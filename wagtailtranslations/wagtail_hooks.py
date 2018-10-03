@@ -1,7 +1,7 @@
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
-from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.admin.widgets import Button
+from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.core import hooks
 
 from .models import Language, TranslatedPage

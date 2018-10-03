@@ -1,6 +1,8 @@
-from wagtail.admin.edit_handlers import (
-    BaseChooserPanel, PageChooserPanel)
+from wagtail.admin.edit_handlers import BaseChooserPanel
 from wagtail.admin.widgets import AdminPageChooser
+from wagtail.utils.decorators import cached_classmethod
+
+from .models import TranslatedPage
 
 
 class TranslationKeyChooser(AdminPageChooser):
