@@ -3,6 +3,7 @@ Wagtail translations
 ====================
 
 A plugin for Wagtail that provides page translations.
+By extending your pages with the models included in this package users will be redirected to pages in (or closest to) their language.
 
 Installing
 ==========
@@ -25,7 +26,8 @@ Add it to your ``INSTALLED_APPS``:
 
 
 
-It works with Wagtail 1.7 and upwards.
+It works with Wagtail 2.2 and upwards.
+Check versions before 2.0 for compatability with older versions of wagtail.
 
 Quick start
 ===========
@@ -49,9 +51,9 @@ Define a translated model:
 
 .. code-block:: python
 
-    from wagtail.wagtailadmin.edit_handlers import FieldPanel
-    from wagtail.wagtailcore.fields import RichTextField
-    from wagtail.wagtailcore.models import Page
+    from wagtail.admin.edit_handlers import FieldPanel
+    from wagtail.core.fields import RichTextField
+    from wagtail.core.models import Page
     from wagtailtranslations.models import TranslatedPage
 
     class ContentPage(TranslatedPage, Page):

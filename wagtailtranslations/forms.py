@@ -1,7 +1,7 @@
 import uuid
 
 from django import forms
-from wagtail.wagtailadmin.widgets import AdminPageChooser
+from wagtail.admin.widgets import AdminPageChooser
 
 
 class BaseTranslationKeyChoiceField(forms.ModelChoiceField):

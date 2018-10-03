@@ -1,6 +1,5 @@
 import os
 
-
 INSTALLED_APPS = [
     'tests.app',
 
@@ -8,17 +7,17 @@ INSTALLED_APPS = [
     'modelcluster',
     'wagtailtranslations',
 
-    'wagtail.wagtailcore',
-    'wagtail.wagtailadmin',
-    'wagtail.wagtailusers',
-    'wagtail.wagtailsites',
-    'wagtail.wagtailsnippets',
-    'wagtail.wagtailsearch',
-    'wagtail.wagtaildocs',
-    'wagtail.wagtailimages',
+    'wagtail.core',
+    'wagtail.admin',
+    'wagtail.users',
+    'wagtail.sites',
+    'wagtail.snippets',
+    'wagtail.search',
+    'wagtail.documents',
+    'wagtail.images',
     'wagtail.contrib.modeladmin',
-    'wagtail.contrib.wagtailroutablepage',
-    'wagtail.contrib.wagtailstyleguide',
+    'wagtail.contrib.routable_page',
+    'wagtail.contrib.styleguide',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,7 +44,7 @@ DEBUG = True
 USE_TZ = True
 TIME_ZONE = 'Australia/Hobart'
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -53,7 +52,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'wagtail.wagtailcore.middleware.SiteMiddleware',
+    'wagtail.core.middleware.SiteMiddleware',
 ]
 
 TEMPLATES = [

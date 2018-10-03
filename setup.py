@@ -21,8 +21,8 @@ setup(
     url='https://github.com/takeflight/wagtailtranslations/',
 
     install_requires=[
-        'wagtail>=1.7',
-        'wagtailfontawesome~=1.0.6',
+        'wagtail>=2.0',
+        'wagtailfontawesome~=1.0',
     ],
     zip_safe=False,
     license='BSD License',
