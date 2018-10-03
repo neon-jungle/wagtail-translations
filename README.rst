@@ -25,7 +25,7 @@ Add it to your ``INSTALLED_APPS``:
 
 
 
-It works with Wagtail 1.7 and upwards.
+It works with Wagtail 2.0 and upwards.
 
 Quick start
 ===========
@@ -49,9 +49,9 @@ Define a translated model:
 
 .. code-block:: python
 
-    from wagtail.wagtailadmin.edit_handlers import FieldPanel
-    from wagtail.wagtailcore.fields import RichTextField
-    from wagtail.wagtailcore.models import Page
+    from wagtail.admin.edit_handlers import FieldPanel
+    from wagtail.core.fields import RichTextField
+    from wagtail.core.models import Page
     from wagtailtranslations.models import TranslatedPage
 
     class ContentPage(TranslatedPage, Page):
