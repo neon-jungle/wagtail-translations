@@ -9,10 +9,10 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import activate
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel
-from wagtail.wagtailadmin.forms import (
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
+from wagtail.admin.forms import (
     WagtailAdminModelForm, WagtailAdminPageForm)
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 
 from .fields import PageTranslationKeyField
 
