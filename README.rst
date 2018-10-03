@@ -3,6 +3,7 @@ Wagtail translations
 ====================
 
 A plugin for Wagtail that provides page translations.
+By extending your pages with the models included in this package users will be redirected to pages in (or closest to) their language.
 
 Installing
 ==========
@@ -25,7 +26,8 @@ Add it to your ``INSTALLED_APPS``:
 
 
 
-It works with Wagtail 2.0 and upwards.
+It works with Wagtail 2.2 and upwards.
+Check versions before 2.0 for compatability with older versions of wagtail.
 
 Quick start
 ===========
