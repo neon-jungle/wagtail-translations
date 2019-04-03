@@ -16,9 +16,9 @@ setup(
     version=version,
     description='Page translation plugin for Wagtail',
     long_description=readme,
-    author='Tim Heap',
-    author_email='tim@takeflight.com.au',
-    url='https://github.com/takeflight/wagtailtranslations/',
+    author='Neon Jungle',
+    author_email='developers@neonjungle.studio',
+    url='https://github.com/neon-jungle/wagtail-translations/',
 
     install_requires=[
         'wagtail>=2.0',

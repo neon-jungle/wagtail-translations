@@ -7,7 +7,7 @@ from django.db import models
 from django.db.models import Case, Value, When
 from django.http import Http404
 from django.shortcuts import redirect
-from django.utils.translation import activate
+from django.utils.translation import LANGUAGE_SESSION_KEY, activate
 from django.utils.translation import ugettext_lazy as _
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
@@ -213,6 +213,7 @@ class TranslatedPage(Page):
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
         request.LANGUAGE_CODE = self.language.code
+        request.session[LANGUAGE_SESSION_KEY] = self.language.code
         return super(TranslatedPage, self).serve(request, *args, **kwargs)
 
     def get_translations(self):
